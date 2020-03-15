@@ -1,6 +1,8 @@
 {
   "rules": {
-    ".read": true,
-    ".write": "auth != null && auth.uid == 'sample_allow_long_uid'"
+    "isplist": {
+      ".read": true,
+      ".write": "auth != null && auth.uid == 'sample_allow_long_uid'"
+    }
   }
 }

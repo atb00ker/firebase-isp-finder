@@ -1,50 +1,51 @@
 import * as functions from 'firebase-functions';
 const admin = require('firebase-admin');
+const firebaseConfig = require('./environment');
 
-let accessid: string;
-let firebaseConfig = null;
-if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    // Development
-    accessid = "sample_allow_long_uid";
-    firebaseConfig = functions.config().firebase;
-} else {
-    // Production
-    accessid = functions.config().auth.accessid;
-    firebaseConfig = functions.config();
-}
-
-firebaseConfig.databaseAuthVariableOverride = { uid: accessid };
-firebaseConfig.databaseURL = `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`;
-firebaseConfig.storageBucket = `${process.env.GCLOUD_PROJECT}.appspot.com`;
-firebaseConfig.projectId = `${process.env.GCLOUD_PROJECT}`;
 admin.initializeApp(firebaseConfig);
 const auth = admin.auth();
 
 export const addProvider = functions.https.onRequest((request, response) => {
-    if (request.method !== "POST") {
-        response.status(400).send("Not Allowed");
+    response.set('Access-Control-Allow-Origin', '*')
+    response.set('Access-Control-Allow-Methods', 'POST')
+    response.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
+
+    if (request.method === 'OPTIONS') {
+        response.status(200).send('Allowed');
         return;
+    } else if (request.method === 'POST') {
+        if (!request.body || !request.body['uid'] ||
+            !request.body['pincode'] || !request.body['values'] ||
+            !request.body['values']['name']) { response.status(400).send('Request Body Error'); }
+        const data = request.body;
+        auth.getUser(data['uid'])
+            .then(() => {
+                const pincode = data['pincode'];
+                const name = data['values']['name'];
+                const contact = (data['values']['contact'] || '');
+                const website = (data['values']['website'] || '');
+                databasePush(pincode, name, contact, website)
+                    .then(status => {
+                        if (status === undefined) response.status(200).send('Success');
+                        else response.status(400).send('Failed');
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        response.status(500).send('Server Error');
+                    });
+                return;
+            })
+            .catch(() => {
+                response.status(403).send('Unknown User');
+                return;
+            });
+    } else {
+        response.status(405).send('Method Not Allowed');
+        return
     }
-    const data = request.body;
-    auth.getUser(data['uid'])
-        .then(() => {
-            const pincode = valueOrEmpty(data["pincode"]);
-            const name = valueOrEmpty(data["values"]["name"]);
-            const contact = valueOrEmpty(data["values"]["contact"]);
-            const website = valueOrEmpty(data["values"]["website"]);
-            const database = admin.database().ref("isplist").child(pincode);
-            database.push({ name, contact, website }, (error: any) => console.log(error));
-            response.status(200).send("Complete");
-        })
-        .catch((error: any) => {
-            console.log(error);
-            response.status(403).send("Unknown User");
-        });
 });
 
-function valueOrEmpty(value: string) {
-    if (value !== undefined)
-        return value;
-    else
-        return '';
+async function databasePush(pincode: number, name: string, contact: string, website: string) {
+    const database = admin.database().ref('isplist').child(pincode);
+    await database.push({ name, contact, website }, (error: Error | null) => { return error; });
 }
