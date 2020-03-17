@@ -1,11 +1,11 @@
 import * as functions from 'firebase-functions';
+import { firebaseConfig } from './environment'
 const admin = require('firebase-admin');
-const firebaseConfig = require('./environment');
 
 admin.initializeApp(firebaseConfig);
 const auth = admin.auth();
 
-export const addProvider = functions.https.onRequest((request, response) => {
+export const addProvider = functions.region('asia-northeast1').https.onRequest((request, response) => {
     response.set('Access-Control-Allow-Origin', '*')
     response.set('Access-Control-Allow-Methods', 'POST')
     response.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');

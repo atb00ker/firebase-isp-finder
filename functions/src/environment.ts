@@ -1,5 +1,5 @@
 const functions = require('firebase-functions');
-let firebaseConfig: any;
+export let firebaseConfig: any;
 
 // Set according to environment mode.
 if (process.env.ENV_MODE === 'develop') {
@@ -16,5 +16,3 @@ if (process.env.ENV_MODE === 'develop') {
     firebaseConfig.databaseURL = `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`;
     firebaseConfig.projectId = `${process.env.GCLOUD_PROJECT}`;
 }
-
-module.exports = firebaseConfig

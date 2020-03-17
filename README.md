@@ -49,7 +49,7 @@ export GOOGLE_APPLICATION_CREDENTIALS="./account.json"
 # Use `firebase functions:config:get` to get the value of `auth.accessid`
 # Default: 'sample_allow_long_uid'
 export AUTH_ACCESSID=<YOUR_RANDOM_AUTH_ACCESS_ID>
-# Default: 'freebasics-firebase'
+# Default: 'atb00ker-apps'
 export GCLOUD_PROJECT=<YOUR_PROJECT_NAME>
 ```
 

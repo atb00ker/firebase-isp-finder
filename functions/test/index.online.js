@@ -14,7 +14,7 @@ var assert = require('assert');
 const sinon = require('sinon');
 
 const accessid = process.env.AUTH_ACCESSID || 'sample_allow_long_uid';
-const gproject = process.env.GCLOUD_PROJECT || 'freebasics-firebase';
+const gproject = process.env.GCLOUD_PROJECT || 'atb00ker-apps';
 const privtoken = process.env.GOOGLE_APPLICATION_CREDENTIALS || './account.json';
 
 const projectConfig = {
