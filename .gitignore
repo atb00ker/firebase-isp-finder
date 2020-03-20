@@ -74,3 +74,6 @@ account.json
 # Typescript v1 declaration files
 typings/
 !functions/test/*.js
+
+# Editor: vscode
+.vscode/

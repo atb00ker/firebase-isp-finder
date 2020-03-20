@@ -54,3 +54,9 @@ export GCLOUD_PROJECT=<YOUR_PROJECT_NAME>
 ```
 
 2. Run tests: `npm run test`
+
+## (Advanced) Add provider in multiple pincode
+
+1. Follow (setup)[#setup] guide.
+2. Follow (setup)[#develop] guide.
+3. Run script `python3 maintenance/multi-pin-provider.py`
